@@ -27,7 +27,7 @@
     "php": ">=7.3",
     "ext-mbstring": "*",
     "ext-fileinfo": "*",
-    "energia-source/knight-armor": ">=2.0.1"
+    "knight/armor": ">=2.0.1"
   },
   "repositories": [
     {
