@@ -6,7 +6,6 @@ use stdClass;
 
 use Knight\armor\Language;
 
-use Entity\Map;
 use Entity\Field;
 use Entity\Validation;
 use Entity\validations\options\Search;
@@ -73,7 +72,7 @@ class Enum extends Search implements Human
         $human->associative = $this->getAssociative();
         array_walk($human->associative, function (&$value, $key) use ($namespace) {
             if (false === is_object($value)) $value = new stdClass();
-            if (false === property_exists($value, Map::FRONT)) $value->{Map::FRONT} = Language::translate($namespace . $key);
+            if (false === property_exists($value, Field::TEXT)) $value->{Field::TEXT} = Language::translate($namespace . $key);
         });
         $search = $this->getSearch()->human($namespace, $protected);
         if (array_filter((array)$search)) $human->search = $search;

@@ -20,7 +20,6 @@ abstract class Map
     use Configuration, Action;
 
     const PRINT = 'PRINTABLE';
-    const FRONT = 'text';
 
     const CONFIGURATION_COLLECTION = 0xa0cda;
     const CONFIGURATION_COLLECTION_DEFALULT = 'COLLECTION';
@@ -315,7 +314,7 @@ abstract class Map
                 && $protected === false) continue;
 
             $item = $field->human($namespace, $protected);
-            if (false === property_exists($item, static::FRONT)) $item->{static::FRONT} = Language::translate($namespace . $item->name);
+            if (false === property_exists($item, Field::TEXT)) $item->{Field::TEXT} = Language::translate($namespace . $item->name);
             array_push($response->fields, $item);
         }
 

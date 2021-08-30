@@ -22,8 +22,13 @@ class Field
     const OVERRIDE = 0x1;
     const SKIPJSON = 0x2;
 
+    const READABLE = true;
+    const READABLE_VALUE_FILTER = 0x1;
+    const READABLE_VALUE_RAW = 0x2;
+
     const HUMAN = 'human';
     const REQUIRED = 'required';
+    const TEXT = 'text';
 
     protected $row;               // Row
     protected $name;              // (string)
@@ -171,17 +176,17 @@ class Field
         return $this->row;
     }
 
-    public function setValue($value, int $option = 0) : bool
+    public function setValue($value, int $flags = 0) : bool
     {
-        if (false === (bool)(static::OVERRIDE & $option)
+        if (false === (bool)(static::OVERRIDE & $flags)
             && $this->getSafeMode() && $this->getProtected()) return false;
 
-        if (false === (bool)(static::SKIPJSON & $option))
+        if (false === (bool)(static::SKIPJSON & $flags))
             $this->value = static::json($value) ? json_decode($value) : $value;
 
         $trigger = $this->getTrigger();
         if (null !== $trigger) $trigger->call($this);
-        if ((bool)(static::OVERRIDE & $option)
+        if ((bool)(static::OVERRIDE & $flags)
             || true === $this->checkValue()) return true;
 
         $this->setDefault();
@@ -229,9 +234,21 @@ class Field
         return false;
     }
 
-    public function getValue()
+    public function getValue(bool $readable = false, int $flags = 0)
     {
-        return $this->value;
+        if ($readable !== static::READABLE) return $this->value;
+    
+        $value = $value instanceof Entity
+            ? clone $value
+            : $this->value;
+        $value_recursive = array(&$value);
+        array_walk_recursive($value_recursive, function (&$item) use ($flags) {
+            if ($item instanceof Entity) $item = $item->getAllFieldsValues(
+                (bool)($flags & static::READABLE_VALUE_FILTER),
+                (bool)($flags & static::READABLE_VALUE_RAW)
+            );
+        });
+        return $value;
     }
 
     public function setProtected(bool $protected = true) : self
