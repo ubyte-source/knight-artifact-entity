@@ -238,9 +238,9 @@ class Field
     {
         if ($readable !== static::READABLE) return $this->value;
     
-        $value = $value instanceof Entity
-            ? clone $value
-            : $this->value;
+        $value = $this->value;
+        if ($value instanceof Entity) $value = clone $value;
+
         $value_recursive = array(&$value);
         array_walk_recursive($value_recursive, function (&$item) use ($flags) {
             if ($item instanceof Entity) $item = $item->getAllFieldsValues(
@@ -248,6 +248,7 @@ class Field
                 (bool)($flags & static::READABLE_VALUE_RAW)
             );
         });
+
         return $value;
     }
 
