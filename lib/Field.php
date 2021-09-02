@@ -139,7 +139,7 @@ class Field
 
         array_walk_recursive($field_value, function ($item, $index) use ($warning) {
             if (false === ($item instanceof Entity)
-                || $item->isDefault()) return;
+                || $item->isDefault() && false === $this->getRequired()) return;
 
             $multiple = $this->getValue();
             $multiple = is_array($multiple);
