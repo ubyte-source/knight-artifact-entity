@@ -23,8 +23,8 @@ class Field
     const SKIPJSON = 0x2;
 
     const READABLE = true;
-    const READABLE_VALUE_FILTER = 0x1;
-    const READABLE_VALUE_RAW = 0x2;
+    const READABLE_VALUE_FILTER = 0x4;
+    const READABLE_VALUE_RAW = 0x8;
 
     const HUMAN = 'human';
     const REQUIRED = 'required';
@@ -138,11 +138,12 @@ class Field
         $field_value = array($field_value);
 
         array_walk_recursive($field_value, function ($item, $index) use ($warning) {
-            if (false === ($item instanceof Entity)) return;
+            if (false === ($item instanceof Entity)
+                || $item->isDefault()) return;
 
             $multiple = $this->getValue();
             $multiple = is_array($multiple);
-            $handlers = $item->getAllFieldsWarning(null);
+            $handlers = $item->getAllFieldsWarning(Entity::DISABLE_TRANSLATE_WARNING);
             foreach ($handlers as $handler) {
                 $clone = clone $handler;
                 $warning->addHandlers($clone);
@@ -238,9 +239,9 @@ class Field
     {
         if ($readable !== static::READABLE) return $this->value;
     
-        $value = $this->value;
-        if ($value instanceof Entity) $value = clone $value;
-
+        $value = $value instanceof Entity
+            ? clone $value
+            : $this->value;
         $value_recursive = array(&$value);
         array_walk_recursive($value_recursive, function (&$item) use ($flags) {
             if ($item instanceof Entity) $item = $item->getAllFieldsValues(
@@ -248,7 +249,6 @@ class Field
                 (bool)($flags & static::READABLE_VALUE_RAW)
             );
         });
-
         return $value;
     }
 

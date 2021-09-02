@@ -47,11 +47,12 @@ trait Action
         $fields = $this->getFields($filter);
         if (empty($fields)) return array();
 
-        $response = [];
+        $response = array();
         foreach ($fields as $field) {
             $field_name = $field->getName();
             array_push($response, $field_name);
         }
+
         return $response;
     }
 
@@ -168,18 +169,18 @@ trait Action
         return $response;
     }
 
-    public function getAllFieldsWarning(?bool $translate = true) : array
+    public function getAllFieldsWarning(int $flags = 0) : array
     {
         $fields = $this->getFields();
         $fields_response = [];
 
         foreach ($fields as $field) {
             $handlers = $field->getWarning(true)->getHandlers();
-            if (null === $translate) array_push($fields_response, ...$handlers);
-            if (null === $translate
+            if ((bool)($flags & Map::DISABLE_TRANSLATE_WARNING)) array_push($fields_response, ...$handlers);
+            if ((bool)($flags & Map::DISABLE_TRANSLATE_WARNING)
                 || empty($handlers)) continue;
 
-            array_walk($handlers, function (Handler $handler) use ($field, $translate, &$fields_response) {
+            array_walk($handlers, function (Handler $handler) use ($field, &$fields_response) {
                 $warning = new Warning();
                 $warning->name = $handler->getName() ?? $field->getName();
                 $warning->name = preg_replace('/^(\[(\w+)\])/', '$2', $warning->name);

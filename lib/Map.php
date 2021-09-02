@@ -12,7 +12,6 @@ use Knight\armor\CustomException;
 use Entity\Field;
 use Entity\Adapter;
 use Entity\Validation;
-use Entity\validations\ShowArray;
 use Entity\field\features\Action;
 
 abstract class Map
@@ -30,6 +29,8 @@ abstract class Map
         'initialize',
         'after'
     ];
+
+    const DISABLE_TRANSLATE_WARNING = 0x16;
 
     // const COLLECTION = 'collection_name'
 
@@ -241,7 +242,6 @@ abstract class Map
 
     public function setFromAssociative(array $post, array $files = []) : self
     {
-        $filter = ShowArray::filter($post);
         $fields = $this->getFields();
         $fields_files = $this->getAllFieldsFile();
         array_walk($fields_files, function (Field $field) use ($files) {
@@ -249,14 +249,14 @@ abstract class Map
             if (array_key_exists($field_name, $files))
                 $this->getField($field_name)->setValue($files[$field_name]);
         });
-        
+
         $fields_files_name = $this->getAllFieldsFileName();
         foreach ($fields as $field) {
             $field_name = $field->getName();
             if (in_array($field_name, $fields_files_name)
-                || !array_key_exists($field_name, $filter)) continue;
+                || !array_key_exists($field_name, $post)) continue;
 
-            $this->getField($field_name)->setValue($filter[$field_name]);
+            $this->getField($field_name)->setValue($post[$field_name]);
         }
 
         return $this;
