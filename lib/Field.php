@@ -29,6 +29,7 @@ class Field
     const HUMAN = 'human';
     const REQUIRED = 'required';
     const TEXT = 'text';
+    const NAME = 'name';
 
     protected $row;               // Row
     protected $name;              // (string)
@@ -386,7 +387,7 @@ class Field
         $clone = clone $this;
         $clone_remove = new ReflectionObject($clone);
         $clone_remove = $clone_remove->getProperties(ReflectionProperty::IS_PRIVATE);
-        $clone_remove = array_column($clone_remove, 'class', 'name');
+        $clone_remove = array_column($clone_remove, 'class', static::NAME);
 
         $namespace_name = $clone->getName();
         $namespace_name = $namespace . $namespace_name . '\\';

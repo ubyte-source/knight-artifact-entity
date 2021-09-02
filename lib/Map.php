@@ -327,6 +327,20 @@ abstract class Map
         return $response;
     }
 
+    public static function translation(array $array) : array
+    {
+        $response = array();
+        foreach ($array as $item)
+            if (is_array($item) || $item instanceof stdClass)
+                $response += static::translation((array)$item);
+
+        if (!array_key_exists(Field::NAME, $array)
+            || !array_key_exists(Field::TEXT, $array)) return $response;
+
+        $response[$array[Field::NAME]] = $array[Field::TEXT];
+        return $response;
+    }
+
     public function checkFieldExists(string $name) : bool
     {
         $fields_filtered = $this->getFields($name);
