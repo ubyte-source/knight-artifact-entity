@@ -5,39 +5,71 @@ namespace Entity\map;
 use Closure;
 use stdClass;
 
-use Entity\Map as Entity;
+use Entity\Map;
+use Entity\Field;
 
 class Remote
 {
-    const FIELDS = 'fields';
+    protected $parameter; // (array)
+    protected $structure; // (Closure)
+    protected $data;      // (Closure)
 
-    protected $map;      // (Map)
-    protected $callable; // (Closure)
-
-    public function __construct(Entity $map, Closure $callable)
+    public function __construct(...$parameter)
     {
-        $this->map = $map;
-        $this->callable = $callable;
+        $this->setParameter($parameter);
     }
 
-    public function request() : stdClass
+    public function setStructure(Closure $structure) : self
     {
-        static $requested;
-        if ($requested instanceof stdClass) return $requested;
+        $this->structure = $structure;
+        return $this;
+    }
 
-        $requested = $this->getCallable();
-        $requested = call_user_func($requested, $this);
-
+    public function getStructure(...$parameters) :? stdClass
+    {
+        if (null === $this->structure) return null;
+        $requested = $this->getParameter();
+        $requested = $this->callClosure($this->structure, $requested);
         return $requested;
     }
 
-    protected function getMap() : Entity
+    public function setData(Closure $data) : self
     {
-        return $this->map;
+        $this->data = $data;
+        return $this;
     }
 
-    protected function getCallable() : Closure
+    public function getData(...$parameters) :? stdClass
     {
-        return $this->callable;
+        if (null === $this->data) return null;
+        $requested = $this->getParameter();
+        $requested = $this->callClosure($this->data, $requested);
+        return $requested;
+    }
+
+    public function getPrimaryKey() : array
+    {
+        $structure = $this->getStructure();
+        $structure_unique = $structure->{Map::UNIQUE};
+        if (empty($structure_unique)
+            || !array_key_exists(Field::PRIMARY, $structure_unique)) return array();
+        return $structure_unique[Field::PRIMARY];
+    }
+
+    protected function setParameter(array $parameter) : void
+    {
+        $this->parameter = $parameter;
+    }
+
+    protected function getParameter() : array
+    {
+        return $this->parameter;
+    }
+
+    protected function callClosure(Closure $closure, array $parameters) : stdClass
+    {
+        $requested = $this->getParameter();
+        array_push($requested, ...$parameters);
+        return call_user_func_array($closure, $requested);
     }
 }

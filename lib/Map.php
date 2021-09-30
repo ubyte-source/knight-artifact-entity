@@ -33,6 +33,9 @@ abstract class Map
 
     const DISABLE_TRANSLATE_WARNING = 0x16;
 
+    const FIELDS = 'fields';
+    const UNIQUE = 'unique';
+
     // const COLLECTION = 'collection_name'
 
     protected $fields = [];      // (array)
@@ -163,7 +166,7 @@ abstract class Map
         return $this;
     }
 
-    public function getRemote() : array
+    public function getRemotes() : array
     {
         return $this->remote;
     }
@@ -301,7 +304,8 @@ abstract class Map
         if (array_key_exists(static::PRINT, $constant)) foreach ($constant[static::PRINT] as $key => $value) $response->{$key} = $value;
         if (array_key_exists($collection = static::getCollectionConstant(), $constant)) $response->collection = $constant[$collection];
 
-        $response->{Remote::FIELDS} = [];
+        $response->{static::FIELDS} = [];
+        $response->{static::UNIQUE} = $this->getAllFieldsUniqueGroups();
 
         $reflection = $this->getReflection();
         $reflection_filename = $reflection->getFileName();
@@ -322,17 +326,17 @@ abstract class Map
 
             $item = $field->human($namespace, $protected);
             if (false === property_exists($item, Field::TEXT)) $item->{Field::TEXT} = Language::translate($namespace . $item->name);
-            array_push($response->{Remote::FIELDS}, $item);
+            array_push($response->{static::FIELDS}, $item);
         }
 
-        $remote = $this->getRemote();
+        $remote = $this->getRemotes();
         foreach ($remote as $item) {
-            $requested = $item->request();
-            if (false === property_exists($requested, Remote::FIELDS)
-                || !is_array($requested->{Remote::FIELDS})) continue;
+            $structure = $item->getStructure();
+            if (false === property_exists($structure, static::FIELDS)
+                || !is_array($structure->{static::FIELDS})) continue;
 
-            $fields = $requested->{Remote::FIELDS};
-            array_push($response->{Remote::FIELDS}, ...$fields);
+            $fields = $structure->{static::FIELDS};
+            array_push($response->{static::FIELDS}, ...$fields);
         }
 
         return $response;

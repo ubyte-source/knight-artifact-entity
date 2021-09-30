@@ -28,6 +28,7 @@ class Field
 
     const HUMAN = 'human';
     const REQUIRED = 'required';
+    const PRIMARY = 'primary';
     const TEXT = 'text';
     const NAME = 'name';
 
