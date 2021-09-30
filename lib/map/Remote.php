@@ -65,7 +65,7 @@ class Remote
         return $this->parameter;
     }
 
-    protected function callClosure(Closure $closure, array $request) : stdClass
+    protected function callClosure(Closure $closure, array $request) :? stdClass
     {
         $parameters = $this->getParameter();
         array_push($parameters, ...$request);
