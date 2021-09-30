@@ -333,7 +333,8 @@ abstract class Map
         $remote = $this->getRemotes();
         foreach ($remote as $item) {
             $structure = $item->getStructure();
-            if (false === property_exists($structure, static::FIELDS)
+            if (null === $structure
+                || false === property_exists($structure, static::FIELDS)
                 || !is_array($structure->{static::FIELDS})) continue;
 
             $fields = $structure->{static::FIELDS};
