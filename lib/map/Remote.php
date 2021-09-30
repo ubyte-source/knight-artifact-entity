@@ -28,8 +28,7 @@ class Remote
     public function getStructure(...$parameters) :? stdClass
     {
         if (null === $this->structure) return null;
-        $requested = $this->getParameter();
-        $requested = $this->callClosure($this->structure, $requested);
+        $requested = $this->callClosure($this->structure, $parameters);
         return $requested;
     }
 
@@ -42,8 +41,7 @@ class Remote
     public function getData(...$parameters) :? stdClass
     {
         if (null === $this->data) return null;
-        $requested = $this->getParameter();
-        $requested = $this->callClosure($this->data, $requested);
+        $requested = $this->callClosure($this->data, $parameters);
         return $requested;
     }
 
@@ -67,10 +65,10 @@ class Remote
         return $this->parameter;
     }
 
-    protected function callClosure(Closure $closure, array $parameters) : stdClass
+    protected function callClosure(Closure $closure, array $request) : stdClass
     {
-        $requested = $this->getParameter();
-        array_push($requested, ...$parameters);
-        return call_user_func_array($closure, $requested);
+        $parameters = $this->getParameter();
+        array_push($parameters, ...$request);
+        return call_user_func_array($closure, $parameters);
     }
 }
