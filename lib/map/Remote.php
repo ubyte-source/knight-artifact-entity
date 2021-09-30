@@ -52,8 +52,9 @@ class Remote
         $structure = $this->getStructure();
         $structure_unique = $structure->{Map::UNIQUE};
         if (empty($structure_unique)
-            || !array_key_exists(Field::PRIMARY, $structure_unique)) return array();
-        return $structure_unique[Field::PRIMARY];
+            || !property_exists($structure_unique, Field::PRIMARY)) return array();
+
+        return $structure_unique->{Field::PRIMARY};
     }
 
     protected function setParameter(array $parameter) : void

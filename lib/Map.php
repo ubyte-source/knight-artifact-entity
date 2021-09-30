@@ -38,8 +38,7 @@ abstract class Map
 
     // const COLLECTION = 'collection_name'
 
-    protected $fields = [];      // (array)
-    protected $remote = [];      // (array) Remote
+    protected $fields = [];      // (array) Field
 
     private $adapter;            // Adapter
     private $safemode = true;    // (bool)
@@ -47,6 +46,8 @@ abstract class Map
     private $duplicable = false; // (bool)
     private $collection;         // (string)
     private $hash;               // (string)
+
+    protected $remotes = [];     // (array) Remote
 
     public static function factory(string $classname) : self
     {
@@ -160,15 +161,15 @@ abstract class Map
         return $this->readmode;
     }
 
-    public function setRemote(Remote ...$remote) : self
+    public function setRemotes(Remote ...$remotes) : self
     {
-        $this->remote = $remote;
+        $this->remotes = $remotes;
         return $this;
     }
 
     public function getRemotes() : array
     {
-        return $this->remote;
+        return $this->remotes;
     }
 
     public function setCollectionName(string $name) : self
