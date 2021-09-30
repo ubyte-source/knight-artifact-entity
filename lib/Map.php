@@ -13,6 +13,7 @@ use Entity\Field;
 use Entity\Adapter;
 use Entity\Validation;
 use Entity\field\features\Action;
+use Entity\map\Remote;
 
 abstract class Map
 {
@@ -35,7 +36,7 @@ abstract class Map
     // const COLLECTION = 'collection_name'
 
     protected $fields = [];      // (array)
-    protected $remote;           // stdClass
+    protected $remote = [];      // (array) Remote
 
     private $adapter;            // Adapter
     private $safemode = true;    // (bool)
@@ -156,7 +157,13 @@ abstract class Map
         return $this->readmode;
     }
 
-    public function getRemote() :? stdClass
+    public function setRemote(Remote ...$remote) : self
+    {
+        $this->remote = $remote;
+        return $this;
+    }
+
+    public function getRemote() : array
     {
         return $this->remote;
     }
@@ -294,7 +301,7 @@ abstract class Map
         if (array_key_exists(static::PRINT, $constant)) foreach ($constant[static::PRINT] as $key => $value) $response->{$key} = $value;
         if (array_key_exists($collection = static::getCollectionConstant(), $constant)) $response->collection = $constant[$collection];
 
-        $response->fields = [];
+        $response->{Remote::FIELDS} = [];
 
         $reflection = $this->getReflection();
         $reflection_filename = $reflection->getFileName();
@@ -315,13 +322,17 @@ abstract class Map
 
             $item = $field->human($namespace, $protected);
             if (false === property_exists($item, Field::TEXT)) $item->{Field::TEXT} = Language::translate($namespace . $item->name);
-            array_push($response->fields, $item);
+            array_push($response->{Remote::FIELDS}, $item);
         }
 
         $remote = $this->getRemote();
-        if (null !== $remote && is_array($remote->fields)) {
-            $fields = array_values($remote->fields);
-            array_push($response->fields, ...$fields);
+        foreach ($remote as $item) {
+            $requested = $item->request();
+            if (false === property_exists($requested, Remote::FIELDS)
+                || !is_array($requested->{Remote::FIELDS})) continue;
+
+            $fields = $requested->{Remote::FIELDS};
+            array_push($response->{Remote::FIELDS}, ...$fields);
         }
 
         return $response;
