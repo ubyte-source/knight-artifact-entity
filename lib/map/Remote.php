@@ -6,17 +6,35 @@ use Closure;
 use stdClass;
 
 use Entity\Map;
+use Entity\map\remote\Data;
 use Entity\Field;
 
 class Remote
 {
-    protected $parameter; // (array)
-    protected $structure; // (Closure)
-    protected $data;      // (Closure)
+    protected $parameters; // (array)
+    protected $structure;  // (Closure)
+    protected $data;       // (Data)
 
-    public function __construct(...$parameter)
+    public function __construct(Map $map, ...$parameters)
     {
-        $this->setParameter($parameter);
+        $this->setMap($map);
+        $this->setParameter($parameters);
+        $this->setData(new Data($this));
+    }
+
+    public function getMap() : Map
+    {
+        return $this->map;
+    }
+
+    public function getData() : Data
+    {
+        return $this->data;
+    }
+
+    public function getParameters() : array
+    {
+        return $this->parameters;
     }
 
     public function setStructure(Closure $structure) : self
@@ -27,47 +45,33 @@ class Remote
 
     public function getStructure() :? stdClass
     {
-        if (null === $this->structure) return null;
-        return $this->callClosure($this->structure);
+        if ($this->structure instanceof Closure) return $this->structure->call($this);
+        return null;
     }
 
-    public function setData(Closure $data) : self
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-    public function getData(array &$results) :? stdClass
-    {
-        if (null === $this->data) return null;
-        $requested = $this->callClosure($this->data, $results);
-        return $requested;
-    }
-
-    public function getPrimaryKey() : array
+    public function getForeign() : string
     {
         $structure = $this->getStructure();
         $structure_unique = $structure->{Map::UNIQUE};
         if (empty($structure_unique)
-            || !property_exists($structure_unique, Field::PRIMARY)) return array();
+            || !property_exists($structure_unique, Field::PRIMARY)
+            || 1 !== count($structure_unique->{Field::PRIMARY})) throw new CustomException('entity/remote/key/not/key/primary');
 
-        return $structure_unique->{Field::PRIMARY};
+        return reset($structure_unique->{Field::PRIMARY});
     }
 
-    protected function setParameter(array $parameter) : void
+    protected function setParameter(array $parameters) : void
     {
-        $this->parameter = $parameter;
+        $this->parameters = $parameters;
     }
 
-    protected function getParameter() : array
+    protected function setMap(Map $map) : void
     {
-        return $this->parameter;
+        $this->map = $map;
     }
 
-    protected function callClosure(Closure $closure, array &$results = null) :? stdClass
+    protected function setData(Data $data) : void
     {
-        $parameters = $this->getParameter();
-        if (null !== $results) $parameters[] = &$results;
-        return call_user_func_array($closure, $parameters);
+        $this->data = $data;
     }
 }
