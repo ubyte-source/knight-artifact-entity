@@ -5,6 +5,8 @@ namespace Entity\map;
 use Closure;
 use stdClass;
 
+use Knight\armor\CustomException;
+
 use Entity\Map;
 use Entity\map\remote\Data;
 use Entity\Field;

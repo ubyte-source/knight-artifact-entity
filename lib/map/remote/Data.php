@@ -4,6 +4,8 @@ namespace Entity\map\remote;
 
 use Closure;
 
+use Knight\armor\CustomException;
+
 use Entity\map\Remote;
 
 class Data
