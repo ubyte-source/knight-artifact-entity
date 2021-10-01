@@ -12,12 +12,6 @@ class Data
     protected $worker; // (Closure)
     protected $key;    // (string)
 
-    public static function combine(array &$array, string $key)
-    {
-        $higeco_column = array_column($array, $key);
-		$higeco = array_combine($higeco_column, $higeco);
-    }
-
     public function __construct(Remote $remote)
     {
         $this->setRemote($remote);
