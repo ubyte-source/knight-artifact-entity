@@ -167,6 +167,12 @@ abstract class Map
         return $this;
     }
 
+    public function addRemote(Remote $remote) : self
+    {
+        array_push($this->remotes, $remote);
+        return $this;
+    }
+
     public function getRemotes() : array
     {
         return $this->remotes;
