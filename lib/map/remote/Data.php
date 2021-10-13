@@ -41,13 +41,12 @@ class Data
         return $this;
     }
 
-    public function get(array &$results) : void
+    public function get(array &$results, array $post = array()) : void
     {
         $key = $this->getKey();
         $worker = $this->getWorker();
         if (null === $key || null === $worker) return;
 
-        $post = array();
         $post_foreign = $this->getRemote()->getForeign();
         $post[$post_foreign] = array_column($results, $key);
         $post[$post_foreign] = array_unique($post[$post_foreign]);
