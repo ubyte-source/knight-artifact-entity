@@ -17,14 +17,14 @@ class Remote
     protected $structure;  // (Closure)
     protected $data;       // (Data)
 
-    public function __construct(Map $map, ...$parameters)
+    public function __construct(?Map $map, ...$parameters)
     {
         $this->setMap($map);
         $this->setParameter($parameters);
         $this->setData(new Data($this));
     }
 
-    public function getMap() : Map
+    public function getMap() :? Map
     {
         return $this->map;
     }
@@ -67,7 +67,7 @@ class Remote
         $this->parameters = $parameters;
     }
 
-    protected function setMap(Map $map) : void
+    protected function setMap(?Map $map) : void
     {
         $this->map = $map;
     }
