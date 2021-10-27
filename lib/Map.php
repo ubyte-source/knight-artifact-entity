@@ -173,9 +173,15 @@ abstract class Map
         return $this;
     }
 
-    public function getRemotes() : array
+    public function getRemotes(string ...$contains) : array
     {
-        return $this->remotes;
+        if (empty($contains)) return $this->remotes;
+        return array_filter($this->remotes, function (Remote $remote) use ($contains) {
+            $fields = $remote->getStructure();
+            $fields = array_column($fields->{static::FIELDS}, Field::NAME);
+            $fields = array_intersect($fields, $contains);
+            return !!$fields;
+        });
     }
 
     public function setCollectionName(string $name) : self
