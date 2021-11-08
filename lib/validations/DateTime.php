@@ -57,15 +57,7 @@ class DateTime extends Validation
         if (null === $field_value
             || !is_string($field_value)) return true;
 
-        $check_expectations_response = $this->checkExpectations($field_value);
-        if (false === $check_expectations_response) {
-            $expectations = $this->getExpectations();
-            $expectations = preg_filter('/^.*$/', '"$0"', $expectations);
-            $expectations = implode(chr(44) . chr(32), $expectations);
-
-            throw new CustomException('developer/expectations/' . $expectations);
-        }
-        return true;
+        return $this->checkExpectations($field_value);
     }
 
     public function after(Field $field) : bool
@@ -80,10 +72,9 @@ class DateTime extends Validation
         $format_conversion = $readmode ? $this->getFormatFrom() : $this->getFormatConversion();
 
         $field_value = $field->getValue();
-        $field_value_default = $this->getDefault();
 
         if ($format_from === $format_conversion
-            || $field_value_default === $field_value) return true;
+            || $field_value === $this->getDefault()) return true;
 
         $create_datetime = PHPDatetime::createFromFormat($format_from, $field_value);
         if (false === $create_datetime) return $readmode;
@@ -162,7 +153,8 @@ class DateTime extends Validation
         } else {
             $format_from = $this->getFormatFrom();
             foreach ($expectations as $item) {
-                $create_datetime = PHPDatetime::createFromFormat($value === null ? $expectations_type : $format_from, $value === null ? $item : $value);
+                $create_datetime_format = $value === null ? $expectations_type : $format_from;
+                $create_datetime = PHPDatetime::createFromFormat($create_datetime_format, $value ?? $item);
                 if ($value === null && false === $create_datetime) throw new CustomException('developer/validation/' . $expectations_type . '/' . $item);
                 if ($value === null
                     || $create_datetime && $create_datetime->format($expectations_type) == $item) return true;
