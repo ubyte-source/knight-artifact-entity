@@ -343,8 +343,12 @@ abstract class Map
         }
 
         $remote = $this->getRemotes();
+        $remotes_skip = $this->getAllFieldsKeys();
         foreach ($remote as $item) {
             $structure = $item->getStructure();
+            $structure = (object)array_filter((array)$structure->{static::FIELDS}, function (object $object) use ($remotes_skip) {
+                return !in_array($object->{Field::NAME}, $remotes_skip);
+            });
             if (null === $structure
                 || false === property_exists($structure, static::FIELDS)
                 || !is_array($structure->{static::FIELDS})) continue;
