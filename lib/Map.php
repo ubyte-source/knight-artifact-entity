@@ -347,15 +347,14 @@ abstract class Map
         $remotes_skip = $this->getAllFieldsKeys();
         foreach ($remote as $item) {
             $structure = $item->getStructure();
-            $structure = (object)array_filter((array)$structure->{static::FIELDS}, function (object $object) use ($remotes_skip) {
-                return !in_array($object->{Field::NAME}, $remotes_skip);
-            });
             if (null === $structure
                 || false === property_exists($structure, static::FIELDS)
                 || !is_array($structure->{static::FIELDS})) continue;
 
-            $fields = $structure->{static::FIELDS};
-            array_push($response->{static::FIELDS}, ...$fields);
+            $structure = array_filter((array)$structure->{static::FIELDS}, function (object $object) use ($remotes_skip) {
+                return !in_array($object->{Field::NAME}, $remotes_skip);
+            });
+            if (false === empty($structure)) array_push($response->{static::FIELDS}, ...$structure);
         }
 
         return $response;
