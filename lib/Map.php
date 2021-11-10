@@ -220,6 +220,7 @@ abstract class Map
         $field_clone->setCore($this);
         $field_clone->setSafeMode($this->safemode);
         $field_clone->setReadMode($this->readmode);
+        $field_clone->setUniqueness();
 
         array_push($this->fields, $field_clone);
 
