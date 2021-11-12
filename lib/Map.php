@@ -84,7 +84,9 @@ abstract class Map
         $fields = $this->getFields();
         $this->removeAllFields();
         array_walk($fields, function (Field $field) {
-            $this->addFieldClone($field);
+            $clone = $this->addFieldClone($field);
+            $field_uniqueness = $field->getUniqueness();
+            $clone->setUniqueness(...$field_uniqueness);
         });
         $this->hash = null;
         $adapter = $this->getAdapter();
