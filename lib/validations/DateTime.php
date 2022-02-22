@@ -169,6 +169,6 @@ class DateTime extends Validation
         if (null === $default) return null;
         $format_conversion = $this->getFormatConversion();
         $format_conversion_datetime = $default->format($format_conversion);
-        return $format_conversion_datetim;
+        return $format_conversion_datetime;
     }
 }
