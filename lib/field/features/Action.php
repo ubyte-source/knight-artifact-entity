@@ -13,14 +13,29 @@ use Entity\validations\Matrioska;
 
 use Entity\field\warning\Handler;
 
+/* A Warning is a class that has a name and a message */
+
 class Warning
 {
     public $name;    // (string)
     public $message; // (string)
 }
 
+
+/* It's a trait that allows you to use the `getAllFields` methods. */
+
 trait Action
 {
+    /**
+     * Get all the fields values of the current object
+     * 
+     * @param bool filter If true, only return fields that are not null.
+     * @param bool raw If true, the values will be returned as is. If false, the values will be
+     * converted to the appropriate type.
+     * 
+     * @return The values of the fields.
+     */
+    
     public function getAllFieldsValues(bool $filter = false, bool $raw = true) : array
     {
         $fields = $this->getFields($filter);
@@ -42,6 +57,14 @@ trait Action
         return $response;
     }
 
+    /**
+     * It returns an array of all the field names of the table
+     * 
+     * @param bool filter If true, only the fields that are not null will be returned.
+     * 
+     * @return An array of field names.
+     */
+    
     public function getAllFieldsKeys(bool $filter = false) : array /// da rinominare perchè mi da fastidio da quante volte sbaglio a scrivere
     {
         $fields = $this->getFields($filter);
@@ -56,6 +79,12 @@ trait Action
         return $response;
     }
 
+    /**
+     * Get all the fields that are required
+     * 
+     * @return An array of fields that are required.
+     */
+    
     public function getAllFieldsRequired() : array
     {
         if (!$fields = $this->getFields()) return [];
@@ -65,6 +94,12 @@ trait Action
         return $required;
     }
 
+    /**
+     * Get all the fields that are required
+     * 
+     * @return An array of field names.
+     */
+    
     public function getAllFieldsRequiredName() : array
     {
         $required = $this->getAllFieldsRequired();
@@ -76,6 +111,12 @@ trait Action
         return $required;
     }
 
+    /**
+     * Get all the fields that are protected
+     * 
+     * @return An array of fields that are protected.
+     */
+    
     public function getAllFieldsProtected() : array
     {
         $fields = $this->getFields();
@@ -88,6 +129,12 @@ trait Action
         return $protected;
     }
 
+    /**
+     * Get all the protected fields in the class
+     * 
+     * @return An array of field names.
+     */
+    
     public function getAllFieldsProtectedName() : array
     {
         $protected = $this->getAllFieldsProtected();
@@ -99,6 +146,12 @@ trait Action
         return $protected;
     }
 
+    /**
+     * Returns an array of all the fields that have a File validation
+     * 
+     * @return An array of fields that have a File validation.
+     */
+    
     public function getAllFieldsFile() : array
     {
         $fields = $this->getFields();
@@ -115,6 +168,12 @@ trait Action
         return $response;
     }
 
+    /**
+     * Get all the field names from all the files
+     * 
+     * @return An array of field names.
+     */
+    
     public function getAllFieldsFileName() : array
     {
         $files = $this->getAllFieldsFile();
@@ -126,6 +185,10 @@ trait Action
         return $files;
     }
 
+    /**
+     * Get all the fields that are of type Matrioska
+     */
+    
     public function getAllFieldsMatrioska() : iterable
     {
         $fields = $this->getFields();
@@ -134,6 +197,12 @@ trait Action
                 yield $field;
     }
 
+    /**
+     * Get all the fields in the matrioska
+     * 
+     * @return An array of field names.
+     */
+    
     public function getAllFieldsMatrioskaName() : iterable
     {
         $matrioska = $this->getAllFieldsMatrioska();
@@ -143,6 +212,10 @@ trait Action
         }, $matrioska);
     }
 
+    /**
+     * Get all the babushka's from all the patterns in all the fields in all the matrioska's
+     */
+    
     public function getAllFieldsBabuska() : iterable
     {
         $matrioska = $this->getAllFieldsMatrioska();
@@ -151,6 +224,13 @@ trait Action
                 yield $pattern->getBabushka();
     }
 
+    /**
+     * Get all the fields that are unique and return them grouped by the unique group name
+     * 
+     * @return An array of arrays. The first level is the unique group name. The second level is the
+     * field name.
+     */
+    
     public function getAllFieldsUniqueGroups() : array
     {
         $fields = $this->getFields();
@@ -169,6 +249,14 @@ trait Action
         return $response;
     }
 
+    /**
+     * Get all the warnings for all the fields in the map
+     * 
+     * @param int flags 
+     * 
+     * @return An array of warnings.
+     */
+    
     public function getAllFieldsWarning(int $flags = 0) : array
     {
         $fields = $this->getFields();

@@ -10,6 +10,8 @@ use Knight\armor\CustomException;
 use Entity\Field;
 use Entity\Validation;
 
+/* The DateTime class is a validation class that validates a date or datetime */
+
 class DateTime extends Validation
 {
     const TYPE = ':datetime';
@@ -19,6 +21,30 @@ class DateTime extends Validation
     protected $expectations_type;  // (string)
     protected $expectations = [];  // (array)
 
+    /**
+     * * The constructor takes a default value and a format. 
+     * * It sets the default value and the format. 
+     * * It also sets the format conversion. 
+     * * It parses the default value and sets it. 
+     * 
+     * The constructor is a bit long, but it's not too bad. 
+     * 
+     * The first thing we do is check if the default value is null. 
+     * If it is, we throw an exception. 
+     * 
+     * Next, we set the format from. 
+     * This is the format that the default value is in. 
+     * 
+     * Next, we set the format conversion. 
+     * This is the format that the value will be converted to. 
+     * 
+     * Next, we parse the default value and set it.
+     * 
+     * @param default The default value to use if the value is not set.
+     * @param string from The format of the date/time that is expected to be passed in.
+     * @param string conversion The format to convert the date to.
+     */
+    
     public function __construct(?PHPDatetime $default = null, string $from = null, string $conversion = null)
     {
         if (null === $from) throw new CustomException('developer/entity/validation/datetime/constructor');
@@ -30,11 +56,27 @@ class DateTime extends Validation
         $this->setDefault($default_parsed);
     }
 
+    /**
+     * It checks the expectations of the test.
+     * 
+     * @return The return value is a boolean value.
+     */
+
     public function test() : bool
     {
         return $this->checkExpectations();
     }
 
+    /**
+     * If the field is in safe mode, and the field value is empty, set the field value to the default
+     * value
+     * 
+     * @param Field field The field object that is being validated.
+     * 
+     * @return The return value is a boolean value. If the value is true, the field is safe. If the
+     * value is false, the field is not safe.
+     */
+    
     public function before(Field $field) : bool
     {
         if (false === $field->getSafeMode()) return true;
@@ -46,6 +88,16 @@ class DateTime extends Validation
         return true;
     }
 
+    /**
+     * If the field is not in read mode, or if the field is in safe mode, then the field is not
+     * vulnerable. Otherwise, if the field is in read mode and not in safe mode, then the field is
+     * vulnerable
+     * 
+     * @param Field field The field to check.
+     * 
+     * @return The return value is a boolean value.
+     */
+    
     public function action(Field $field) : bool
     {
         $field_readmode = $field->getReadMode();
@@ -60,11 +112,27 @@ class DateTime extends Validation
         return $this->checkExpectations($field_value);
     }
 
+    /**
+     * This function is called after the field has been processed
+     * 
+     * @param Field field The field that is being validated.
+     * 
+     * @return The return value is a boolean value. If the method returns true, the field is added to
+     * the form. If the method returns false, the field is not added to the form.
+     */
+    
     public function after(Field $field) : bool
     {
         return true;
     }
 
+    /**
+     * If the field's value is not the default value, and the format conversion is the same as the
+     * format from, or the field's value is not numeric, then return true
+     * 
+     * @param Field field The field object that is being processed.
+     */
+    
     public function magic(Field $field) : bool
     {
         $readmode = $field->getReadMode();
@@ -87,6 +155,14 @@ class DateTime extends Validation
         return parent::magic($field);
     }
 
+    /**
+     * * Sets the expectations type and expectations
+     * 
+     * @param string expectations_type The type of expectation.
+     * 
+     * @return The object itself.
+     */
+    
     public function setExpectations(string $expectations_type, string ...$expectations) : self
     {
         $this->setExpectationsType($expectations_type);
@@ -94,6 +170,15 @@ class DateTime extends Validation
         return $this;
     }
 
+    /**
+     * Returns a human readable version of the format
+     * 
+     * @param namespace The namespace of the class to be converted.
+     * @param bool protected If true, the property will be protected.
+     * 
+     * @return An object with two properties: from and conversion.
+     */
+    
     public function human(?string $namespace = null, bool $protected = false) : stdClass
     {
         $human = new stdClass();
@@ -102,41 +187,92 @@ class DateTime extends Validation
         return (object)$human;
     }
 
+    /**
+     * Returns the expectations for the test
+     * 
+     * @return An array of expectations.
+     */
+    
     protected function getExpectations() : array
     {
         return $this->expectations;
     }
 
+    /**
+     * * Sets the expectations type for the test
+     * 
+     * @param string expectations_type The type of expectations that are being set.
+     */
+    
     protected function setExpectationsType(string $expectations_type) : void
     {
         $this->expectations_type = $expectations_type;
     }
 
+    /**
+     * The getExpectationsType function returns the expectations type
+     * 
+     * @return The type of expectation.
+     */
+    
     protected function getExpectationsType() : string
     {
         return $this->expectations_type;
     }
 
+    /**
+     * * Set the format from
+     * 
+     * @param string format_from The format of the data that is being read.
+     */
+    
     protected function setFormatFrom(string $format_from) : void
     {
         $this->format_from = $format_from;
     }
 
+    /**
+     * Returns the format from which the data is being read
+     * 
+     * @return The format_from property.
+     */
+    
     protected function getFormatFrom() : string
     {
         return $this->format_from;
     }
 
+    /**
+     * * Sets the format conversion for the current row
+     * 
+     * @param string format_conversion The format conversion to apply to the data.
+     */
+    
     protected function setFormatConversion(string $format_conversion) : void
     {
         $this->format_conversion = $format_conversion;
     }
 
+    /**
+     * Returns the format conversion for the current database
+     * 
+     * @return The format conversion.
+     */
+    
     protected function getFormatConversion() : string
     {
         return $this->format_conversion;
     }
 
+    /**
+     * If the value is null, then the function checks if the expectations array has two items. If the
+     * value is not null, then the function checks if the value is in the expectations array
+     * 
+     * @param string value The value to check.
+     * 
+     * @return The return value is a boolean value.
+     */
+    
     protected function checkExpectations(string $value = null) : bool
     {
         $expectations = $this->getExpectations();
@@ -164,6 +300,16 @@ class DateTime extends Validation
         return false;
     }
 
+    /**
+     * * If the default value is null, return null.
+     * * Otherwise, convert the default value to the format specified by the format conversion.
+     * * Return the converted default value
+     * 
+     * @param default The default value for the column.
+     * 
+     * @return The default value in the format that the database expects.
+     */
+        
     private function parseDefault(?PHPDatetime $default) :? string
     {
         if (null === $default) return null;

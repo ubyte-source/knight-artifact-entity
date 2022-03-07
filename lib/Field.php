@@ -47,6 +47,14 @@ class Field
     private $safemode = false;    // (bool)
     private $readmode = false;    // (bool)
 
+    /**
+     * If the string is a valid JSON string, return true. Otherwise, return false
+     * 
+     * @param string The string to check.
+     * 
+     * @return A boolean value.
+     */
+    
     public static function json($string) : bool
     {
         if (false === is_string($string) || is_numeric($string)) return false;
@@ -55,6 +63,12 @@ class Field
             && $decoded !== $string;
     }
 
+    /**
+     * Clone the object and all its properties
+     * 
+     * @return Nothing.
+     */
+    
     public function __clone()
     {
         $this->setWarning(new Warning());
@@ -73,6 +87,16 @@ class Field
         });
     }
 
+    /**
+     * The constructor for the class
+     * 
+     * @param Entity core The core object that is used to access the database.
+     * @param string name The name of the table.
+     * @param bool safemode If true, the table will be read only.
+     * @param bool readmode This is a boolean value that indicates whether the current user has read
+     * access to the table.
+     */
+    
     public function __construct(Entity $core, string $name, bool &$safemode, bool &$readmode)
     {
         $this->setCore($core);
@@ -84,17 +108,37 @@ class Field
         $this->setRow(new Row());
     }
 
+    /**
+     * The setCore function sets the core property of the class to the core parameter
+     * 
+     * @param Entity core The core entity that is being used to create the new entity.
+     * 
+     * @return The object itself.
+     */
+    
     public function setCore(Entity $core) : self
     {
         $this->core = $core;
         return $this;
     }
 
+    /**
+     * Returns the core of the entity
+     * 
+     * @return The core entity.
+     */
+    
     public function getCore() : Entity
     {
         return $this->core;
     }
 
+    /**
+     * * Set the validation patterns for the field
+     * 
+     * @return The object itself.
+     */
+    
     public function setPatterns(Validation ...$patterns) : self
     {
         if (empty($patterns)) return $this;
@@ -124,6 +168,15 @@ class Field
         return $this;
     }
 
+    /**
+     * If the field is a Matrioska field, and the field is not a default value, and the field is
+     * required, then return the warning
+     * 
+     * @param bool deep If true, the warning will be returned for all the fields in the entity.
+     * 
+     * @return The warning object.
+     */
+    
     public function getWarning(bool $deep = false) : Warning
     {
         $type = $this->getType();
@@ -157,28 +210,65 @@ class Field
         return $warning;
     }
 
+    /**
+     * The setTrigger method takes a Closure as a parameter and sets it as the trigger for the event
+     * 
+     * @param Closure closure A closure that will be called when the event is triggered.
+     * 
+     * @return The object itself.
+     */
+    
     public function setTrigger(Closure $closure) : self
     {
         $this->trigger = $closure;
         return $this;
     }
 
+    /**
+     * Returns the trigger function for the event
+     * 
+     * @return The closure that is being returned is the closure that is being assigned to the trigger
+     * property.
+     */
+    
     public function getTrigger() :? Closure
     {
         return $this->trigger;
     }
 
+    /**
+     * The setRow function sets the row property to the value of the row parameter
+     * 
+     * @param Row row The row that was just added to the table.
+     * 
+     * @return The object itself.
+     */
+    
     public function setRow(Row $row) : self
     {
         $this->row = $row;
         return $this;
     }
 
+    /**
+     * Returns the current row of the result set
+     * 
+     * @return The row object.
+     */
+    
     public function getRow() : Row
     {
         return $this->row;
     }
 
+    /**
+     * If the value is not set, set it to the default value. If the value is set, check it against the
+     * validation pattern. If it passes, return true. If it doesn't, return false
+     * 
+     * @param value The value to set.
+     * @param int flags 
+     */
+    
     public function setValue($value, int $flags = 0) : bool
     {
         if (false === (bool)(static::OVERRIDE & $flags)
@@ -203,6 +293,12 @@ class Field
         return false;
     }
 
+    /**
+     * This function sets the default value for the field
+     * 
+     * @return The object itself.
+     */
+    
     public function setDefault() : self
     {
         $item = $this->getDefaults();
@@ -211,6 +307,12 @@ class Field
         return $this;
     }
 
+    /**
+     * Returns an array of default values for all the patterns in the validation
+     * 
+     * @return An array of default values.
+     */
+    
     public function getDefaults() : array
     {
         $patterns = $this->getPatterns();
@@ -223,6 +325,12 @@ class Field
         return $patterns;
     }
 
+    /**
+     * If the field value is an entity, return the entity's isDefault() value. Otherwise, return false
+     * 
+     * @return The `isDefault()` method returns a boolean value.
+     */
+    
     public function isDefault() : bool
     {
         $field_value = $this->getValue();
@@ -237,6 +345,15 @@ class Field
         return false;
     }
 
+    /**
+     * Returns the value of the field
+     * 
+     * @param bool readable If true, the value will be returned as a readable value.
+     * @param int flags 
+     * 
+     * @return The value of the field.
+     */
+    
     public function getValue(bool $readable = false, int $flags = 0)
     {
         if ($readable !== static::READABLE) return $this->value;
@@ -255,28 +372,68 @@ class Field
         return $value;
     }
 
+    /**
+     * * Set the protected property to the value of the argument
+     * 
+     * @param bool protected Whether or not the property is protected.
+     * 
+     * @return Nothing.
+     */
+    
     public function setProtected(bool $protected = true) : self
     {
         $this->protected = $protected;
         return $this;
     }
 
+    /**
+     * "Get the value of the protected property."
+     * 
+     * The function name is `getProtected()`
+     * 
+     * @return The protected property of the class.
+     */
+    
     public function getProtected() : bool
     {
         return $this->protected === true;
     }
 
+    /**
+     * Set the required flag to true or false
+     * 
+     * @param bool required Whether or not the field is required.
+     * 
+     * @return Nothing.
+     */
+    
     public function setRequired(bool $required = true) : self
     {
         $this->required = $required;
         return $this;
     }
 
+    /**
+     * Returns a boolean value indicating whether the field is required
+     * 
+     * @return The value of the `required` property.
+     */
+    
     public function getRequired() : bool
     {
         return $this->required === true;
     }
 
+    /**
+     * If the field is required, and the field is not protected, and the field has a default value,
+     * then return true
+     * 
+     * @param bool deep If true, the checkRequired method will be called recursively on all child
+     * entities.
+     * 
+     * @return Nothing.
+     */
+    
     public function try(bool $deep = false) : bool
     {
         if ($deep) {
@@ -298,6 +455,12 @@ class Field
         return true;
     }
 
+    /**
+     * Add a group to the list of groups that this group is unique to
+     * 
+     * @return The object itself.
+     */
+    
     public function addUniqueness(string ...$groups_name) : self
     {
         $groups = array_filter($groups_name, 'strlen');
@@ -312,17 +475,37 @@ class Field
         return $this;
     }
 
+    /**
+     * Returns the uniqueness of the column
+     * 
+     * @return An array of the unique columns.
+     */
+    
     public function getUniqueness() : array
     {
         return $this->unique;
     }
 
+    /**
+     * Set the uniqueness of the column
+     * 
+     * @return The object itself.
+     */
+    
     public function setUniqueness(string ...$uniqueness) : self
     {
         $this->unique = $uniqueness;
         return $this;
     }
 
+    /**
+     * * Set the name of the field
+     * 
+     * @param string name The name of the field.
+     * 
+     * @return The object itself.
+     */
+    
     public function setName(string $name) : self
     {
         $trim = trim($name);
@@ -332,16 +515,36 @@ class Field
         return $this;
     }
 
+    /**
+     * Get the name of the person
+     * 
+     * @return The name of the person.
+     */
+    
     public function getName() : string
     {
         return $this->name;
     }
 
+    /**
+     * Returns an array of patterns that are used to match the file name
+     * 
+     * @return An array of strings.
+     */
+    
     public function getPatterns() : array
     {
         return $this->patterns;
     }
 
+    /**
+     * Returns the type of the pattern
+     * 
+     * @param bool human If true, the type will be returned in human-readable format.
+     * 
+     * @return The type of the first pattern.
+     */
+    
     public function getType(bool $human = true) :? string
     {
         $patterns = $this->getPatterns();
@@ -349,40 +552,99 @@ class Field
         return $patterns === false ? null : $patterns->getType($human);
     }
 
+    /**
+     * The setSafeMode function sets the safemode property of the class to the value of the passed in
+     * parameter
+     * 
+     * @param bool safemode If true, the database will be put into a safe mode before running the
+     * script.
+     * 
+     * @return The object itself.
+     */
+    
     public function setSafeMode(bool &$safemode) : self
     {
         $this->safemode = &$safemode;
         return $this;
     }
 
+    /**
+     * Set the safemode flag to the value of the safemode parameter
+     * 
+     * @param bool safemode If true, the database will be put into a safe mode before the backup is
+     * taken.
+     * 
+     * @return The object itself.
+     */
+    
     public function setSafeModeDetached(bool $safemode) : self
     {
         $this->safemode = &$safemode;
         return $this;
     }
 
+    /**
+     * Returns the value of the `safemode` property
+     * 
+     * @return The value of the safemode property.
+     */
+    
     public function getSafeMode() : bool
     {
         return $this->safemode === true;
     }
 
+    /**
+     * * Set the read mode of the connection
+     * 
+     * @param bool readmode A reference to a boolean value that is set to true if the connection is in
+     * read mode.
+     * 
+     * @return The object itself.
+     */
+    
     public function setReadMode(bool &$readmode) : self
     {
         $this->readmode = &$readmode;
         return $this;
     }
 
+    /**
+     * * Sets the read mode to detached
+     * 
+     * @param bool readmode If true, the connection will be in read mode. If false, the connection will
+     * be in write mode.
+     * 
+     * @return The object itself.
+     */
+    
     public function setReadModeDetached(bool $readmode) : self
     {
         $this->readmode = &$readmode;
         return $this;
     }
 
+    /**
+     * Returns the read mode of the connection
+     * 
+     * @return The value of the readmode property.
+     */
+    
     public function getReadMode() : bool
     {
         return $this->readmode === true;
     }
 
+    /**
+     * Returns an object with all the properties of the class, but with the properties of the parent
+     * class removed
+     * 
+     * @param namespace The namespace to use for the human readable object.
+     * @param bool protected If true, the object will be protected from being overwritten.
+     * 
+     * @return An object with the properties of the object, but with the values of the human() method.
+     */
+    
     public function human(?string $namespace = null, bool $protected = false) : stdClass
     {
         $clone = clone $this;
@@ -407,6 +669,14 @@ class Field
         return $variables;
     }
 
+    /**
+     * This function returns an array of patterns that are suitable for the field
+     * 
+     * @param self field The field that is being validated.
+     * 
+     * @return An array of Validation objects that are suitable for the field.
+     */
+    
     protected static function suitablePatterns(self $field) : array
     {
         $patterns = $field->getPatterns();
@@ -422,6 +692,12 @@ class Field
         return $patterns;
     }
 
+    /**
+     * Check the patterns for validity
+     * 
+     * @return The return value is a boolean value.
+     */
+    
     protected function checkPatterns() : bool
     {
         $patterns = $this->getPatterns();
@@ -432,6 +708,12 @@ class Field
         return true;
     }
 
+    /**
+     * If the value is not valid, then the warning is set and the function returns false
+     * 
+     * @return The return value is a boolean value.
+     */
+    
     protected function checkValue() : bool
     {
         $patterns = $this->getPatterns();
@@ -453,11 +735,22 @@ class Field
         return false;
     }
 
+    /**
+     * The setWarning function is used to set the warning property of the class
+     * 
+     * @param Warning warning The warning to set.
+     */
+
     protected function setWarning(Warning $warning) : void
     {
         $this->warning = $warning;
     }
 
+
+    /**
+     * *This function overrides the default validation patterns with the ones provided.*
+     */
+    
     protected function override(Validation ...$patterns) : void
     {
         $this->patterns = $patterns;

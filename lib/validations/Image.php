@@ -8,11 +8,19 @@ use Entity\Field;
 use Entity\validations\File;
 use Entity\validations\interfaces\Human;
 
+/* This class is a subclass of the File class and it is used to store images */
+
 class Image extends File implements Human
 {
     const TYPE = ':file:image';
 
     protected $resize = [];
+
+    /**
+     * If the field is in read mode, or if the field is not in safe mode, then the field is not modified
+     * 
+     * @param Field field The field to resize.
+     */
 
     public function action(Field $field) : bool
     {
@@ -27,6 +35,14 @@ class Image extends File implements Human
         return $this->resize($field);
     }
 
+    /**
+     * If the field is an image, resize it to the given dimensions
+     * 
+     * @param Field field The field object that is being processed.
+     * 
+     * @return Nothing.
+     */
+    
     protected function resize(Field $field) : bool
     {
         $resize_array = $this->getResize();
@@ -67,6 +83,15 @@ class Image extends File implements Human
         return true;
     }
 
+    /**
+     * Returns a human readable version of the object
+     * 
+     * @param namespace The namespace of the human readable name.
+     * @param bool protected If true, the image is protected and cannot be deleted.
+     * 
+     * @return An object with the following properties:
+     */
+    
     public function human(?string $namespace = null, bool $protected = false) : stdClass
     {
         $human = parent::human($namespace, $protected);
@@ -74,11 +99,28 @@ class Image extends File implements Human
         return $human;
     }
 
+    /**
+     * *This function sets the resize array to the given x and y values.*
+     * 
+     * *This function is used to set the resize array to the given x and y values.*
+     * 
+     * @param int x The x-coordinate of the top-left corner of the rectangle.
+     * @param int y The height of the image.
+     * 
+     * @return The number of elements in the resize array.
+     */
+    
     public function setResize(int $x, int $y) : int
     {
         return array_push($this->resize, $x, $y);
     }
 
+    /**
+     * Returns the resize array
+     * 
+     * @return An array of the resize values.
+     */
+    
     protected function getResize() : array
     {
         return $this->resize;
