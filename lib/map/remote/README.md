@@ -23,19 +23,19 @@ library:
 
 #### ***Class Entity\map\remote\Data usable methods***
 
-## `public function __construct(Remote $remote)`
+##### `public function __construct(Remote $remote)`
 
 The constructor takes a Remote object and stores it in the property
 
  * **Parameters:** `Remote` — The remote to use for the request.
 
-## `public function getRemote() : Remote`
+##### `public function getRemote() : Remote`
 
 Get the remote object
 
  * **Returns:** The remote object.
 
-## `public function setName(string $name) : self`
+##### `public function setName(string $name) : self`
 
 Set the name property to the given value
 
@@ -43,13 +43,13 @@ Set the name property to the given value
  
  * **Returns:** The object itself.
 
-## `public function getName() :? string`
+##### `public function getName() :? string`
 
 If the name property is set, return it. Otherwise, return null
 
  * **Returns:** The name proprerty.
 
-## `public function setKey(string $key) : self`
+##### `public function setKey(string $key) : self`
 
 Set the key for the current instance of the class
 
@@ -57,13 +57,13 @@ Set the key for the current instance of the class
  
  * **Returns:** The object itself.
 
-## `public function getKey() :? string`
+##### `public function getKey() :? string`
 
 Get the key of the current node
 
  * **Returns:** The key property.
 
-## `public function setWorker(Closure $worker) : self`
+##### `public function setWorker(Closure $worker) : self`
 
 Set the worker closure
 
@@ -71,7 +71,7 @@ Set the worker closure
  
  * **Returns:** The object itself.
 
-## `public function get(array &$results, int $flags = 0, array $post = array()) : void`
+##### `public function get(array &$results, int $flags = 0, array $post = array()) : void`
 
 Get the remote data and merge it with the local data
 

@@ -23,31 +23,31 @@ library:
 
 #### ***Class Entity\map\Remote usable methods***
 
-## `public function __construct(?Map $map, ...$parameters)`
+##### `public function __construct(?Map $map, ...$parameters)`
 
 The constructor for the PHP class
 
  * **Parameters:** `map` — map that contains the parameters.
 
-## `public function getMap() :? Map`
+##### `public function getMap() :? Map`
 
 Returns the map that is associated with this game
 
  * **Returns:** The map property.
 
-## `public function getData() : Data`
+##### `public function getData() : Data`
 
 Get the data from the data source
 
  * **Returns:** The data property of the Data class.
 
-## `public function getParameters() : array`
+##### `public function getParameters() : array`
 
 Returns an array of the parameters that were passed to the function
 
  * **Returns:** An array of parameters.
 
-## `public function setStructure(Closure $structure) : self`
+##### `public function setStructure(Closure $structure) : self`
 
 The setStructure method takes a Closure as a parameter and sets it as the structure property.
 
@@ -59,13 +59,13 @@ The structure property is used by the createTable method to create the table
 
  * **Returns:** The object itself.
 
-## `public function getStructure() :? stdClass`
+##### `public function getStructure() :? stdClass`
 
 If the structure is a closure, call it and return the result. Otherwise, return null
 
  * **Returns:** The structure of the table.
 
-## `public function getForeign() : string`
+##### `public function getForeign() : string`
 
 Get the name of the foreign key field
 
