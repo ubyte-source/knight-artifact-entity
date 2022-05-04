@@ -102,14 +102,16 @@ final class Matrioska extends Validation implements Human
     public function after(Field $field) : bool
     {
         $deals = true;
-        if ($field->getSafeMode() && $field->getProtected()) return $deals;
+        if ($field->getSafeMode()
+            && $field->getProtected()) return $deals;
 
         $field_value = $field->getValue();
         $field_value = array($field_value);
         array_walk_recursive($field_value, function ($item) use (&$deals) {
-            if ($item instanceof Map) return;
-            $deals = false;
+            if (false === ($item instanceof Map)
+                || $item->isDefault()) $deals = false;
         });
+
         return $deals;
     }
 
@@ -179,5 +181,4 @@ final class Matrioska extends Validation implements Human
     {
         $this->babushka = $babushka;
     }
-
 }

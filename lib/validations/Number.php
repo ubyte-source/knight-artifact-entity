@@ -41,7 +41,7 @@ class Number extends Validation
 
         $field_value = $field->getValue();
         if (!is_string($field_value) && !is_numeric($field_value)) return false;
-        if (0 === strlen((string)$field_value)) $field->setValue($this->getDefault(), Field::OVERRIDE);
+        if (0 === strlen((string)$field_value)) $field->setDefault();
 
         $field_value = $field->getValue();
         return is_numeric($field_value);

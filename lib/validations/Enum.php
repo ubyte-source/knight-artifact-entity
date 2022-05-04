@@ -49,8 +49,9 @@ class Enum extends Search implements Human
         if (!is_string($field_value) && !is_numeric($field_value)) return false;
         if (0 !== strlen((string)$field_value)) return true;
 
-        $field->setValue($this->getDefault(), Field::OVERRIDE);
-        return !$field->getRequired();
+        $field->setDefault();
+        $field_required = $field->getRequired();
+        return false === $field_required;
     }
 
     /**
