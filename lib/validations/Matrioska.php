@@ -83,9 +83,21 @@ final class Matrioska extends Validation implements Human
             $clone = clone $babushka;
             $clone->setSafeMode($field_safemode)->setReadMode($field_readmode);
             $intra = $clone->setFromAssociative((array)$intra, (array)$intra);
+
+            if (true === $field_readmode
+                && $clone->isDefault())
+                    $intra = null;
         }
 
         unset($intra);
+
+        if ($this->getMultiple()) {
+            $field_value = array_filter($field_value, function ($item) {
+                return null !== $item;
+            });
+            $field_value = array_values($field_value);
+        }
+
         $field->setValue($field_value, Field::OVERRIDE);
 
         return true;

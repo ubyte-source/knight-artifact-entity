@@ -51,7 +51,8 @@ class File extends Validation implements Human
         if (true === $field_readmode
             || $field_safemode === false) return true;
 
-        return $this->checkFileExists($field) && $this->checkMimeValid($field);
+        return $this->checkFileExists($field)
+            && $this->checkMimeValid($field);
     }
 
     /**

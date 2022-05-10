@@ -100,10 +100,8 @@ class DateTime extends Validation
     
     public function action(Field $field) : bool
     {
-        $field_readmode = $field->getReadMode();
         $field_safemode = $field->getSafeMode();
-        if (true === $field_readmode
-            || $field_safemode === false) return true;
+        if (true !== $field_safemode) return true;
 
         $field_value = $field->getValue();
         if (null === $field_value

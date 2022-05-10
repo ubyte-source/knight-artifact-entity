@@ -55,9 +55,7 @@ class Host extends Validation
     public function action(Field $field) : bool
     {
         $field_safemode = $field->getSafeMode();
-        $field_readmode = $field->getReadMode();
-        if (true === $field_readmode
-            || $field_safemode === false) return true;
+        if (true !== $field_safemode) return true;
 
         $field_value = $field->getValue();
         return @preg_match('/^([0-9]{1,3}\.){3}[0-9]{1,3}$/', $field_value);

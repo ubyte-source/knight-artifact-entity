@@ -65,10 +65,8 @@ class Enum extends Search implements Human
     
     public function action(Field $field) : bool
     {
-        $field_readmode = $field->getReadMode();
         $field_safemode = $field->getSafeMode();
-        if (true === $field_readmode
-            || $field_safemode !== true
+        if ($field_safemode !== true
             || $field->isDefault()) return true;
 
         $field_value = $field->getValue();
