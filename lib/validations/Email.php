@@ -38,7 +38,7 @@ class Email extends Regex
     public function magic(Field $field) : bool
     {
         $field_safemode = $field->getSafeMode();
-        if (true === $field_safemode
+        if (false === $field_safemode
             || $this->getClosureMagicStatus() === false) return true;
 
         $field_value = $field->getValue();
