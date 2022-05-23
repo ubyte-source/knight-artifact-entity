@@ -35,19 +35,19 @@ Get the remote object
 
  * **Returns:** The remote object.
 
-##### `public function setName(string $name) : self`
+##### `public function makeStructureName(string $name) : self`
 
-Set the name property to the given value
+This function takes a string and sets it as the structure name
 
- * **Parameters:** `string` — The name of the parameter.
+ * **Parameters:** `string` — The name of the structure.
  
  * **Returns:** The object itself.
 
-##### `public function getName() :? string`
+##### `public function getStructureName() :? string`
 
-If the name property is set, return it. Otherwise, return null
+This function returns the name of the structure
 
- * **Returns:** The name proprerty.
+ * **Returns:** The structure name.
 
 ##### `public function setKey(string $key) : self`
 

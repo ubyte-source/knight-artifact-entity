@@ -12,10 +12,10 @@ class Data
 {
     const JOINLEFT = 0x1;
 
-    protected $remote; // (Remote)
-    protected $worker; // (Closure)
-    protected $name;   // (string)
-    protected $key;    // (string)
+    protected $remote;    // (Remote)
+    protected $worker;    // (Closure)
+    protected $structure; // (string)
+    protected $key;       // (string)
 
     /**
      * The constructor takes a Remote object and stores it in the  property
@@ -40,28 +40,28 @@ class Data
     }
 
     /**
-     * Set the name property to the given value
+     * This function takes a string and sets it as the structure name
      * 
-     * @param string name The name of the parameter.
+     * @param string name The name of the structure.
      * 
-     * @return The object itself.
+     * @return self The object itself.
      */
-    
-    public function setName(string $name) : self
+
+    public function makeStructureName(string $name) : self
     {
-        $this->name = trim($name);
+        $this->structure = trim($name);
         return $this;
     }
-
-    /**
-     * If the name property is set, return it. Otherwise, return null
-     * 
-     * @return The name proprerty.
-     */
     
-    public function getName() :? string
+    /**
+     * This function returns the name of the structure
+     * 
+     * @return ? string The structure name.
+     */
+
+    public function getStructureName() :? string
     {
-        return $this->name;
+        return $this->structure;
     }
 
     /**
@@ -118,30 +118,36 @@ class Data
     {
         $key = $this->getKey();
         $worker = $this->getWorker();
-        if (null === $key || null === $worker) return;
+        if (null === $key
+            || $worker === null) return;
 
-        $post_foreign = $this->getRemote()->getForeign();
-        $post[$post_foreign] = array_column($results, $key);
-        $post[$post_foreign] = array_unique($post[$post_foreign]);
+        $foreign = $this->getRemote()->getForeign();
+
+        $post[$foreign] = array_column($results, $key);
+        $post[$foreign] = array_unique($post[$foreign]);
 
         $remote = $worker->call($this, $post);
-        if (false === is_array($remote)) throw new CustomException('entity/remote/not/response/array');
+        if (false === is_array($remote))
+            throw new CustomException('entity/remote/not/response/array');
 
-        $locale = $this->getName();
-        $locale = false === is_string($locale) || 0 === strlen($locale)
+        $structure = $this->getStructureName();
+        $structure = false === is_string($structure) || 0 === strlen($structure)
             ? null
-            : $locale;
-        $remote_column = array_column($remote, $this->getRemote()->getForeign());
+            : $structure;
+
+        $remote_column = array_column($remote, $foreign);
+        unset($remote[$foreign]);
+
         $remote = array_combine($remote_column, $remote);
-        array_walk($results, function (&$value) use ($key, $flags, $locale, $remote) {
+        array_walk($results, function (&$value) use ($key, $flags, $structure, $remote) {
             if (false === array_key_exists($value[$key], $remote)) {
                 if ((bool)(static::JOINLEFT & $flags) === false) 
                     $value = null;
             } else {
-                if (null === $locale) {
+                if (null === $structure) {
                     $value += (array)$remote[$value[$key]];
                 } else {
-                    $value[$locale] = (array)$remote[$value[$key]];
+                    $value[$structure] = (array)$remote[$value[$key]];
                 }
             }
         });
