@@ -99,7 +99,7 @@ class Number extends Validation
      * @return The object itself.
      */
     
-    public function setMin(?string $min) : self
+    public function setMin(?float $min) : self
     {
         $this->min = $min;
         return $this;
@@ -113,7 +113,7 @@ class Number extends Validation
      * @return The object itself.
      */
     
-    public function setMax(?int $max) : self
+    public function setMax(?float $max) : self
     {
         $this->max = $max;
         return $this;
