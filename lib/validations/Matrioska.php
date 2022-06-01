@@ -4,6 +4,8 @@ namespace Entity\validations;
 
 use stdClass;
 
+use Knight\armor\CustomException;
+
 use Entity\Map;
 use Entity\Field;
 use Entity\Validation;
@@ -21,6 +23,39 @@ final class Matrioska extends Validation implements Human
 
     protected $multiple = false; // (bool)
     protected $babushka;         // Map
+
+    /**
+     * It finds the related matrioska to the given matrioska, based on the given fields
+     * 
+     * @param Map matrioska the matrioska object
+     * 
+     * @return Map A Map object.
+     */
+
+    public static function findRelated(Map $matrioska, ...$fields) : Map
+    {
+        $related = $matrioska;
+        if (count($fields) < 2) return $related;
+        while (1 !== count($fields)) {
+            list($name) = array_splice($fields, 0, 1);
+            $pattern = $related->getField($name)->getPatterns();
+            foreach ($pattern as $item) {
+                $babushka = $item->getBabushka();
+                $babushka_keys = $babushka->getAllFieldsKeys();
+                if (!in_array($fields[0], $babushka_keys)) continue;
+
+                $related = $babushka;
+                break;
+            }
+        }
+
+        $related_keys = $related->getAllFieldsUniqueGroups();
+        if (!array_key_exists(Field::PRIMARY, $related_keys)
+            || !in_array(array_pop($fields), $related_keys[Field::PRIMARY]))
+                throw new CustomException('developer/matrioska/use/only/primary/key');
+
+        return $related;
+    }
 
     /**
      * It sets the default values for the babushka and the default map.
@@ -78,7 +113,7 @@ final class Matrioska extends Validation implements Human
                 || 0 === count((array)$intra)) continue;
 
             if ($this->getMultiple()
-                && false === is_int($index)) return false;
+                && false === is_array($field_value)) return false;
 
             $clone = clone $babushka;
             $clone->setSafeMode($field_safemode)->setReadMode($field_readmode);
