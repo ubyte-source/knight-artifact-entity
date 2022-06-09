@@ -35,14 +35,18 @@ final class Matrioska extends Validation implements Human
     public static function findRelated(Map $matrioska, ...$fields) : Map
     {
         $related = $matrioska;
-        if (count($fields) < 2) return $related;
+        if (count($fields) <= 1) return $related;
+
         while (1 !== count($fields)) {
             list($name) = array_splice($fields, 0, 1);
-            $pattern = $related->getField($name)->getPatterns();
-            foreach ($pattern as $item) {
+
+            $field = $related->getField($name);
+            $field_patterns = $field->getPatterns();
+            foreach ($field_patterns as $item) {
                 $babushka = $item->getBabushka();
                 $babushka_keys = $babushka->getAllFieldsKeys();
-                if (!in_array($fields[0], $babushka_keys)) continue;
+                if (!in_array($fields[0], $babushka_keys))
+                    continue;
 
                 $related = $babushka;
                 break;
