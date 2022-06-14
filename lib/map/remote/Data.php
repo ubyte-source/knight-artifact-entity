@@ -122,6 +122,7 @@ class Data
             || $worker === null) return;
 
         $foreign = $this->getRemote()->getForeign();
+        $foreign_search = empty($post);
 
         $post[$foreign] = array_column($results, $key);
         $post[$foreign] = array_unique($post[$foreign]);
@@ -139,10 +140,11 @@ class Data
         unset($remote[$foreign]);
 
         $remote = array_combine($remote_column, $remote);
-        array_walk($results, function (&$value) use ($key, $flags, $structure, $remote) {
+        array_walk($results, function (&$value) use ($key, $flags, $structure, $remote, $foreign_search) {
             if (false === array_key_exists($value[$key], $remote)) {
-                if ((bool)(static::JOINLEFT & $flags) === false) 
-                    $value = null;
+                if (false === $foreign_search
+                    || (bool)(static::JOINLEFT & $flags) === false) 
+                        $value = null;
             } else {
                 if (null === $structure) {
                     $value += (array)$remote[$value[$key]];
