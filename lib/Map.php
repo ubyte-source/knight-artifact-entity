@@ -629,7 +629,7 @@ abstract class Map
     
     public function checkFieldExists(string $name) : bool
     {
-        $fields_filtered = $this->getFields($name);
+        $fields_filtered = $this->getFields();
         $fields_filtered = array_filter($fields_filtered, function (Field $field) use ($name) {
             return $name === $field->getName();
         });
