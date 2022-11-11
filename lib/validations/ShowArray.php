@@ -63,8 +63,9 @@ class ShowArray extends Validation
     {
         $field_value = $field->getValue();
         if (is_string($field_value)) {
-            $field_value_converted = json_decode($field_value);
-            $field->setValue($field_value_converted, Field::OVERRIDE);
+            $field_value_converts = json_decode($field_value);
+            if (JSON_ERROR_NONE === json_last_error())
+                $field->setValue($field_value_converts, Field::OVERRIDE);
         }
         return true;
     }
@@ -80,10 +81,8 @@ class ShowArray extends Validation
     
     public function action(Field $field) : bool
     {
-        if (false === $field->getSafeMode()) return true;
-
-        $field_value = $field->getValue();
-        return is_array($field_value);
+        if (true !== $field->getSafeMode()) return true;
+        return is_array($field->getValue());
     }
 
     /**
@@ -95,10 +94,9 @@ class ShowArray extends Validation
     
     public function after(Field $field) : bool
     {
-        if (false === $field->getSafeMode()) return true;
+        if (true !== $field->getSafeMode()) return true;
 
-        $field_value = $field->getValue();
-        $field_value = array_values($field_value);
+        $field_value = array_values($field->getValue());
         $field->setValue($field_value, Field::OVERRIDE);
 
         return true;
