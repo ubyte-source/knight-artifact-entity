@@ -20,19 +20,21 @@ objects that are a clone of a Map object */
 final class Matrioska extends Validation implements Human
 {
     const TYPE = ':matrioska';
+    const DISABLE_PRIMARY_MANDATORY = 0x1;
 
     protected $multiple = false; // (bool)
     protected $babushka;         // Map
 
     /**
-     * It finds the related matrioska to the given matrioska, based on the given fields
+     * It finds the related matrioska of a given matrioska, based on the given fields
      * 
      * @param Map matrioska the matrioska object
+     * @param int flags 
      * 
      * @return Map A Map object.
      */
 
-    public static function findRelated(Map $matrioska, ...$fields) : Map
+    public static function findRelated(Map $matrioska, int $flags = 0, ...$fields) : Map
     {
         $related = $matrioska;
         if (count($fields) <= 1) return $related;
@@ -52,6 +54,8 @@ final class Matrioska extends Validation implements Human
                 break;
             }
         }
+
+        if ((bool)($flags & static::DISABLE_PRIMARY_MANDATORY)) return $related;
 
         $related_keys = $related->getAllFieldsUniqueGroups();
         if (!array_key_exists(Field::PRIMARY, $related_keys)
